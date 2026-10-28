@@ -1,0 +1,159 @@
+name: logistics-platform
+services:
+  postgres:
+    image: postgres:17.6-bookworm
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-logistics}
+      POSTGRES_USER: ${POSTGRES_USER:-logistics}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    command: ["postgres", "-c", "timezone=UTC"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4.6-bookworm
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-logistics}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-logistics}
+      REDIS_URL: redis://redis:6379/0
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env (at least 32 random characters)}
+      AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-["http://localhost:5173","http://127.0.0.1:5173","http://localhost:8000","http://127.0.0.1:8000"]}
+      APP_ENV: ${APP_ENV:-development}
+      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+      EXPORT_ROOT: /data/exports
+    group_add: ["${INTAKE_GID:-10001}"]
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./backend/tests:/app/tests:ro
+      - ./backend/alembic:/app/alembic:ro
+      - ./backend/alembic.ini:/app/alembic.ini:ro
+      - ./sftp/download:/data/exports:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 5
+      start_period: 10s
+    init: true
+
+  frontend:
+    build: ./frontend
+    environment:
+      API_PROXY_TARGET: ${API_PROXY_TARGET:-http://api:8000}
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/tests:/app/tests:ro
+      - ./frontend/index.html:/app/index.html:ro
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5173').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    init: true
+
+  intake:
+    profiles: ["ingestion"]
+    build: ./backend
+    user: "${INTAKE_UID:-10001}:${INTAKE_GID:-10001}"
+    command: ["python", "-m", "app.ingestion.cli", "run"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-logistics}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-logistics}
+      APP_ENV: ${APP_ENV:-development}
+      APP_TIMEZONE: UTC
+      INGESTION_ROOT: /data/sftp
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./sftp:/data/sftp
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import pathlib,time; p=pathlib.Path('/tmp/intake-heartbeat'); assert p.exists() and time.time()-p.stat().st_mtime<120"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 15s
+    init: true
+    restart: unless-stopped
+
+  pod-worker:
+    profiles: ["ingestion"]
+    build: ./backend
+    command: ["python", "-m", "app.pod.cli", "run"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-logistics}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-logistics}
+      APP_ENV: ${APP_ENV:-development}
+      APP_TIMEZONE: UTC
+    volumes:
+      - ./backend/app:/app/app:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import pathlib,time; p=pathlib.Path('/tmp/pod-heartbeat'); assert p.exists() and time.time()-p.stat().st_mtime<120"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 15s
+    init: true
+    restart: unless-stopped
+
+  export-worker:
+    profiles: ["exports"]
+    build: ./backend
+    user: "${INTAKE_UID:-10001}:${INTAKE_GID:-10001}"
+    command: ["python", "-m", "app.exports.cli", "run"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-logistics}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-logistics}
+      APP_ENV: ${APP_ENV:-development}
+      APP_TIMEZONE: UTC
+      EXPORT_ROOT: /data/exports
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./sftp/download:/data/exports
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import pathlib,time; p=pathlib.Path('/tmp/export-heartbeat'); assert p.exists() and time.time()-p.stat().st_mtime<120"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 15s
+    init: true
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,0 +1,38 @@
+{
+  "account_number": "248",
+  "reference": "0940121111330012951157",
+  "reference_two": "",
+  "carrier_id": "OPT",
+  "service_name": "OPT",
+  "signature_required": true,
+  "sort_code": "gl",
+  "package": {
+    "weight": 1.73
+  },
+  "from_address": {
+    "name": "Other Wine store",
+    "contact": "Sana Ali",
+    "address_one": "320 CHARLES ST",
+    "address_two": "",
+    "address_three": "",
+    "city": "Lewisville",
+    "state": "TX",
+    "zip": "75067",
+    "note": "",
+    "phone": "555-555-5555",
+    "email": "myself@boxcheck.com"
+  },
+  "to_address": {
+    "name": "XYZ Store",
+    "contact": "John Doe",
+    "address_one": "1100 Congress Ave",
+    "address_two": "",
+    "address_three": " ",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78701",
+    "note": "Adult Signature - NO RELEASE",
+    "phone": "555-555-5555",
+    "email": "myself@boxcheck.com"
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "session": {
+    "id": "1",
+    "email": "synthetic@example.test",
+    "role": "administrator",
+    "company": {
+      "id": "2",
+      "name": "Test Shipper",
+      "slug": "synthetic"
+    },
+    "expires_at": "2099-01-01T00:00:00+00:00"
+  },
+  "areas": [
+    {
+      "id": 1,
+      "name": "west"
+    },
+    {
+      "id": 2,
+      "name": "east"
+    }
+  ],
+  "tracking": {
+    "items": [
+      {
+        "id": "101",
+        "shipment_number": "000DUP",
+        "reference": "000REF1",
+        "reference_two": null,
+        "account": "0007",
+        "carrier": "Synthetic carrier",
+        "service_name": "Test service",
+        "route_id": 1,
+        "route": "west",
+        "company": "Synthetic recipient",
+        "address_one": "1 Test Way",
+        "address_two": null,
+        "city": "Test City",
+        "state": "TS",
+        "zip": "00123",
+        "status": "Undelivered",
+        "pod_name": null,
+        "deliver_time": "2026-10-20T16:45:00-07:00",
+        "due_time": "2026-10-20T17:00:00-07:00",
+        "due_date": "2026-10-21",
+        "weight": "2.50"
+      },
+      {
+        "id": "102",
+        "shipment_number": "000DUP",
+        "reference": "000REF2",
+        "reference_two": null,
+        "account": "0007",
+        "carrier": "Synthetic carrier",
+        "service_name": "Test service",
+        "route_id": 1,
+        "route": "west",
+        "company": "Synthetic recipient",
+        "address_one": "1 Test Way",
+        "address_two": null,
+        "city": "Test City",
+        "state": "TS",
+        "zip": "00123",
+        "status": "Delivered",
+        "pod_name": "Test signer",
+        "deliver_time": "2026-10-20T16:45:00-07:00",
+        "due_time": "2026-10-20T17:00:00-07:00",
+        "due_date": "2026-10-21",
+        "weight": "2.50"
+      }
+    ],
+    "total": 24,
+    "page": 1,
+    "length": 10,
+    "pages": 3,
+    "start_date": "2026-10-20",
+    "end_date": "2026-10-20",
+    "date_type": "due_date",
+    "metrics": {
+      "total": 24,
+      "delivered": 20,
+      "undelivered": 3,
+      "void": 1,
+      "otp": 95
+    }
+  },
+  "search": {
+    "items": [
+      {
+        "id": "101",
+        "shipment_number": "000DUP",
+        "reference": "000REF1",
+        "route": "west",
+        "address_one": "1 Test Way",
+        "city": "Test City",
+        "state": "TS",
+        "zip": "00123"
+      },
+      {
+        "id": "102",
+        "shipment_number": "000DUP",
+        "reference": "000REF2",
+        "route": "west",
+        "address_one": "1 Test Way",
+        "city": "Test City",
+        "state": "TS",
+        "zip": "00123"
+      }
+    ],
+    "identifier": "000DUP",
+    "field": "shipment_number",
+    "total": 2,
+    "page": 1,
+    "length": 10,
+    "pages": 1
+  },
+  "detail": {
+    "id": "102",
+    "shipment_number": "000DUP",
+    "reference": "000REF2",
+    "reference_two": null,
+    "account": "0007",
+    "carrier": "Synthetic carrier",
+    "service_name": "Test service",
+    "route_id": 1,
+    "route": "west",
+    "company": "Synthetic recipient",
+    "address_one": "1 Test Way",
+    "address_two": null,
+    "city": "Test City",
+    "state": "TS",
+    "zip": "00123",
+    "status": "Delivered",
+    "pod_name": "Test signer",
+    "deliver_time": "2026-10-20T16:45:00-07:00",
+    "due_time": "2026-10-20T17:00:00-07:00",
+    "due_date": "2026-10-21",
+    "weight": "2.50",
+    "sender": {
+      "name": "Synthetic shipper",
+      "address_one": "1 Test Way",
+      "address_two": null,
+      "city": "Test City",
+      "state": "TS",
+      "zip": "00123",
+      "note": null,
+      "phone": null,
+      "email": null
+    },
+    "recipient": {
+      "name": "Synthetic recipient",
+      "address_one": "1 Test Way",
+      "address_two": null,
+      "city": "Test City",
+      "state": "TS",
+      "zip": "00123",
+      "note": null,
+      "phone": null,
+      "email": null
+    },
+    "notes": null,
+    "order_date": null,
+    "created_at": "2026-10-19T10:00:00-07:00",
+    "pod_url": null,
+    "history": [
+      {
+        "id": "3",
+        "action": "delivered",
+        "event_time": "2026-10-20T16:45:00-07:00",
+        "receipt_order": "3"
+      },
+      {
+        "id": "2",
+        "action": "attempted",
+        "event_time": "2026-10-20T10:00:00-07:00",
+        "receipt_order": "2"
+      },
+      {
+        "id": "1",
+        "action": "attempted",
+        "event_time": "2026-10-19T10:00:00-07:00",
+        "receipt_order": "1"
+      }
+    ]
+  }
+}

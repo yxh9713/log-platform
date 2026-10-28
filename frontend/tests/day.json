@@ -1,0 +1,47 @@
+{
+  "report_date": "2026-10-28",
+  "stats": {
+    "total": 8,
+    "delivered": 3,
+    "undelivered": 4,
+    "void": 1,
+    "otp": 66.67
+  },
+  "exceptions": {
+    "attempted": 1,
+    "returned": 1,
+    "void": 1,
+    "consolidated": 0,
+    "no_package": 0,
+    "held": 0
+  },
+  "areas": [
+    {
+      "id": 1,
+      "area": "alpha",
+      "total": 5,
+      "delivered": 3,
+      "undelivered": 2,
+      "void": 0,
+      "otp": 66.67
+    },
+    {
+      "id": 2,
+      "area": "empty",
+      "total": 0,
+      "delivered": 0,
+      "undelivered": 0,
+      "void": 0,
+      "otp": 0
+    },
+    {
+      "id": 3,
+      "area": "void",
+      "total": 1,
+      "delivered": 0,
+      "undelivered": 0,
+      "void": 1,
+      "otp": 0
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "otp": 60.8,
+  "delivered": 2563,
+  "undelivered": 511,
+  "schema": [
+    {
+      "name": "recipient_company",
+      "label": "Company",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    },
+    {
+      "name": "recipient_city",
+      "label": "City",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    },
+    {
+      "name": "recipient_state",
+      "label": "State",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    },
+    {
+      "name": "recipient_zip",
+      "label": "Zip",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    },
+    {
+      "name": "pod_name",
+      "label": "POD Name",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    },
+    {
+      "name": "deliver_time",
+      "label": "POD Time",
+      "sort_dir": false,
+      "isClicked": false,
+      "isSelected": true
+    }
+  ],
+  "current_page": 1,
+  "data": [
+    {
+      "shipment_number": "0940702438570010300936",
+      "shipper_ref": "0940702438570010300936",
+      "driver": null,
+      "route": "",
+      "recipient_company": "YS158 BX Corp",
+      "recipient_city": "Bronx",
+      "recipient_zip": "10451",
+      "pod_name": "in the hands",
+      "deliver_time": 1770074520
+    },
+    {
+      "shipment_number": "0069Y69720970010330716",
+      "shipper_ref": "0069Y69720970010330716",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Office of Ken Dulgarian",
+      "recipient_city": "Providence",
+      "recipient_zip": "02906",
+      "pod_name": "Front Door - Box",
+      "deliver_time": 1770101780
+    },
+    {
+      "shipment_number": "0940141260600010330303",
+      "shipper_ref": "0940141260600010330303",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Taco Bell-E 174st",
+      "recipient_city": "Bronx",
+      "recipient_zip": "10460",
+      "pod_name": "front Desk",
+      "deliver_time": 1770106680
+    },
+    {
+      "shipment_number": "0025703123540040320839",
+      "shipper_ref": "0025703123540040320839",
+      "driver": null,
+      "route": "",
+      "recipient_company": "DiVinci Tours Inc",
+      "recipient_city": "Howard Beach",
+      "recipient_zip": "11414",
+      "pod_name": "Dropbox",
+      "deliver_time": 1770108180
+    },
+    {
+      "shipment_number": "0020702653820010330846",
+      "shipper_ref": "0020702653820010330846",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Yellow Bird Auto Center Inc",
+      "recipient_city": "Brooklyn",
+      "recipient_zip": "11204",
+      "pod_name": "Hands customer",
+      "deliver_time": 1770108720
+    },
+    {
+      "shipment_number": "0014120828430010330745",
+      "shipper_ref": "0014120828430010330745",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Spaces LLC",
+      "recipient_city": "East Hartford",
+      "recipient_zip": "06108",
+      "pod_name": "Met Customer",
+      "deliver_time": 1770110307
+    },
+    {
+      "shipment_number": "0018703418600010330052",
+      "shipper_ref": "0018703418600010330052",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Ecuamix Production & Multiservices Corp",
+      "recipient_city": "Corona",
+      "recipient_zip": "11368",
+      "pod_name": "Umder door",
+      "deliver_time": 1770111360
+    },
+    {
+      "shipment_number": "0940141260640010330304",
+      "shipper_ref": "0940141260640010330304",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Taco Bell- Bruckner",
+      "recipient_city": "Bronx",
+      "recipient_zip": "10472",
+      "pod_name": "Sasha",
+      "deliver_time": 1770112380
+    },
+    {
+      "shipment_number": "0014700987230010322301",
+      "shipper_ref": "0014700987230010322301",
+      "driver": null,
+      "route": "",
+      "recipient_company": "TDL Inc",
+      "recipient_city": "Willimantic",
+      "recipient_zip": "06226",
+      "pod_name": "Met Customer",
+      "deliver_time": 1770116311
+    },
+    {
+      "shipment_number": "0021Y69415190010330055",
+      "shipper_ref": "0021Y69415190010330055",
+      "driver": null,
+      "route": "",
+      "recipient_company": "Chaves Family Holdings LLLP",
+      "recipient_city": "New York",
+      "recipient_zip": "10006",
+      "pod_name": "Front desk",
+      "deliver_time": 1770116220
+    }
+  ],
+  "from": 1,
+  "last_page": 308,
+  "per_page": "10",
+  "to": 10,
+  "total": 3074
+}

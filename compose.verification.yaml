@@ -1,0 +1,97 @@
+# Isolated synthetic verification only. Never combine with compose.yaml.
+name: logistics-p12
+x-environment: &environment
+  DATABASE_URL: postgresql://p12:synthetic-p12-only@postgres:5432/logistics_p12
+  REDIS_URL: redis://redis:6379/0
+  APP_ENV: test
+  APP_TIMEZONE: UTC
+  AUTH_SECRET: synthetic-p12-auth-secret-only-not-for-production
+  AUTH_ALLOWED_ORIGINS: '["http://p12.localhost:${P12_FRONTEND_PORT:-5174}","http://localhost:${P12_FRONTEND_PORT:-5174}","http://127.0.0.1:${P12_FRONTEND_PORT:-5174}","http://127.0.0.1:${P12_API_PORT:-8012}"]'
+  EXPORT_ROOT: /data/exports
+x-worker: &worker
+  image: logistics-platform-api:latest
+  environment: *environment
+  volumes:
+    - ./backend/app:/app/app:ro
+    - ./backend/tests:/app/tests:ro
+    - ./.local/p12/download:/data/exports
+  depends_on:
+    postgres: {condition: service_healthy}
+  profiles: [workers]
+  init: true
+services:
+  postgres:
+    image: postgres:17.6-bookworm
+    environment:
+      POSTGRES_DB: logistics_p12
+      POSTGRES_USER: p12
+      POSTGRES_PASSWORD: synthetic-p12-only
+      PGTZ: UTC
+    command: [postgres, -c, timezone=UTC]
+    volumes: [p12_database:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U p12 -d logistics_p12']
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  redis:
+    image: redis:7.4.6-bookworm
+    command: [redis-server, --save, '', --appendonly, 'no']
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  api:
+    command: [uvicorn, app.main:create_app, --factory, --host, 0.0.0.0, --port, "8000", --timeout-graceful-shutdown, "5", --no-proxy-headers]
+    image: logistics-platform-api:latest
+    environment: *environment
+    ports: ['127.0.0.1:${P12_API_PORT:-8012}:8000']
+    group_add: ['${INTAKE_GID:-10001}']
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./backend/tests:/app/tests:ro
+      - ./backend/alembic:/app/alembic:ro
+      - ./backend/alembic.ini:/app/alembic.ini:ro
+      - ./.local/p12/download:/data/exports:ro
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready',timeout=5)"]
+      interval: 2s
+      timeout: 6s
+      retries: 30
+    init: true
+  frontend:
+    image: logistics-platform-frontend:latest
+    environment: {API_PROXY_TARGET: 'http://api:8000'}
+    ports: ['127.0.0.1:${P12_FRONTEND_PORT:-5174}:5173']
+    volumes:
+      - ./frontend/src:/app/src:ro
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:5173').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  export-worker:
+    <<: *worker
+    user: '${INTAKE_UID:-10001}:${INTAKE_GID:-10001}'
+    command: [python, -m, app.exports.cli, run]
+    healthcheck:
+      test: [CMD, python, -c, "import pathlib,time; p=pathlib.Path('/tmp/export-heartbeat'); assert p.exists() and time.time()-p.stat().st_mtime<120"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  pod-worker:
+    <<: *worker
+    command: [python, -m, app.pod.cli, run]
+    healthcheck:
+      test: [CMD, python, -c, "import pathlib,time; p=pathlib.Path('/tmp/pod-heartbeat'); assert p.exists() and time.time()-p.stat().st_mtime<120"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+volumes:
+  p12_database:
